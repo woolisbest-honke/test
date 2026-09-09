@@ -1,0 +1,1128 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>かにかにビーチ 🦀 カニの横歩きサバイバル</title>
+<style>
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;height:100%;}
+  body{
+    background:#0d1b2a;
+    font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,-apple-system,"Segoe UI",sans-serif;
+    color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+    touch-action:none;
+  }
+  #wrap{
+    position:relative;
+    width:min(100vw, calc(100vh * 1.6));
+    aspect-ratio:960/600;
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 18px 60px rgba(0,0,0,.6);
+    background:#7fd3ef;
+  }
+  canvas{display:block;width:100%;height:100%;}
+
+  /* ---------- HUD ---------- */
+  #hud{position:absolute;inset:0;pointer-events:none;font-size:clamp(10px,1.7vmin,20px);}
+  .hud-tl{position:absolute;left:2.2%;top:3%;display:flex;gap:.6em;align-items:baseline;}
+  .hud-tr{position:absolute;right:2.2%;top:3%;display:flex;gap:.5em;align-items:center;}
+  .pill{
+    background:rgba(10,30,50,.42); backdrop-filter:blur(3px);
+    border:1px solid rgba(255,255,255,.22);
+    padding:.25em .7em; border-radius:999px; letter-spacing:.04em;
+    text-shadow:0 1px 2px rgba(0,0,0,.5); white-space:nowrap;
+  }
+  .pill b{font-weight:800;font-size:1.25em;}
+  #score b{color:#ffd76a;}
+  #best b{color:#9fe6ff;}
+  #lives{display:flex;gap:.25em;}
+  .life{
+    width:1.5em;height:1.5em;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #ff8a6b, #d3311c 70%);
+    box-shadow:0 0 0 2px rgba(0,0,0,.25) inset, 0 1px 3px rgba(0,0,0,.4);
+    position:relative;
+  }
+  .life::before,.life::after{
+    content:"";position:absolute;top:-.55em;width:.42em;height:.55em;border-radius:50%;
+    background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.25);
+  }
+  .life::before{left:.18em;} .life::after{right:.18em;}
+  .life.gone{opacity:.22;filter:grayscale(1);}
+
+  #airWrap{
+    position:absolute;left:2.2%;bottom:3.5%;width:22%;
+    height:1.05em;background:rgba(10,30,50,.5);border:1px solid rgba(255,255,255,.25);
+    border-radius:999px;overflow:hidden;
+  }
+  #airBar{height:100%;width:100%;background:linear-gradient(90deg,#6ff0ff,#37b6ff);transition:width .06s linear;}
+  #airBar.low{background:linear-gradient(90deg,#ffb347,#ff5a4d);}
+  #airLabel{position:absolute;left:2.2%;bottom:7.2%;font-size:.8em;letter-spacing:.12em;opacity:.85;text-shadow:0 1px 2px #000;}
+
+  #waveMsg{
+    position:absolute;left:50%;top:12%;transform:translateX(-50%);
+    font-weight:900;letter-spacing:.06em;text-align:center;
+    text-shadow:0 2px 0 rgba(0,0,0,.35),0 0 18px rgba(0,0,0,.4);
+    opacity:0;transition:opacity .18s;
+  }
+  #waveSub{display:block;font-size:.6em;font-weight:700;opacity:.9;margin-top:.2em;}
+
+  /* ---------- 画面オーバーレイ ---------- */
+  #overlay{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 50% 40%, rgba(6,26,44,.72), rgba(4,14,26,.92));
+    backdrop-filter:blur(4px);text-align:center;padding:4% 6%;
+  }
+  #overlay.hidden{display:none;}
+  .card{max-width:92%;}
+  h1{
+    margin:0 0 .1em;font-size:clamp(20px,5.2vmin,54px);font-weight:900;letter-spacing:.02em;
+    background:linear-gradient(180deg,#fff,#ffd08a);-webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 4px 18px rgba(255,140,60,.25);
+  }
+  .sub{margin:.2em 0 1.1em;font-size:clamp(10px,1.9vmin,20px);opacity:.85;}
+  .rules{
+    display:inline-block;text-align:left;font-size:clamp(9px,1.65vmin,18px);line-height:1.85;
+    background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);
+    border-radius:12px;padding:1em 1.4em;margin-bottom:1.2em;
+  }
+  .rules b{color:#ffd76a;}
+  .k{display:inline-block;min-width:1.9em;padding:0 .45em;margin:0 .1em;
+     background:#fff;color:#123;border-radius:5px;font-weight:800;font-size:.92em;
+     box-shadow:0 2px 0 #9aa7b4;}
+  .btn{
+    display:inline-block;cursor:pointer;user-select:none;
+    background:linear-gradient(180deg,#ff7a4f,#e03a1c);
+    border:none;border-bottom:4px solid #a5240f;color:#fff;
+    font:inherit;font-weight:900;letter-spacing:.08em;
+    padding:.6em 1.8em;border-radius:999px;font-size:clamp(11px,2.1vmin,22px);
+    box-shadow:0 8px 24px rgba(224,58,28,.35);
+  }
+  .btn:active{transform:translateY(2px);border-bottom-width:2px;}
+  .stats{font-size:clamp(10px,1.9vmin,20px);margin:.2em 0 1.2em;line-height:1.7;}
+  .stats b{font-size:1.9em;color:#ffd76a;display:block;line-height:1.1;}
+  .newbest{color:#7dffb0;font-weight:900;letter-spacing:.1em;animation:pulse .7s infinite alternate;}
+  @keyframes pulse{from{opacity:.55;}to{opacity:1;}}
+  .hint{margin-top:1em;font-size:clamp(8px,1.4vmin,15px);opacity:.6;}
+
+  /* ---------- タッチ操作 ---------- */
+  #touch{position:absolute;inset:auto 0 0 0;height:34%;display:none;pointer-events:none;}
+  #touch.on{display:block;}
+  .tbtn{
+    position:absolute;pointer-events:auto;user-select:none;
+    width:11%;aspect-ratio:1;border-radius:50%;
+    background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.4);
+    backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;
+    font-size:clamp(12px,3vmin,30px);color:#fff;font-weight:900;
+  }
+  .tbtn.press{background:rgba(255,180,90,.45);transform:scale(.94);}
+  #tL{left:3%;bottom:8%;} #tR{left:16%;bottom:8%;}
+  #tU{left:9.5%;bottom:22%;} #tD{left:9.5%;bottom:-2%;}
+  #tDig{right:4%;bottom:9%;width:16%;font-size:clamp(9px,2vmin,20px);background:rgba(255,120,70,.28);}
+  #topbar{position:absolute;right:2.2%;bottom:3%;display:flex;gap:.4em;pointer-events:auto;font-size:clamp(8px,1.4vmin,15px);}
+  #topbar .mini{
+    pointer-events:auto;cursor:pointer;user-select:none;
+    background:rgba(10,30,50,.5);border:1px solid rgba(255,255,255,.25);
+    border-radius:999px;padding:.3em .8em;letter-spacing:.05em;
+  }
+  #topbar .mini:active{background:rgba(255,180,90,.5);}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game" width="960" height="600"></canvas>
+
+  <div id="hud">
+    <div class="hud-tl">
+      <div class="pill" id="score">SCORE <b>0</b></div>
+      <div class="pill" id="best">BEST <b>0</b></div>
+    </div>
+    <div class="hud-tr"><div class="pill">WAVE <b id="waveNo">1</b></div><div id="lives"></div></div>
+    <div id="waveMsg"></div>
+    <div id="airLabel">AIR（息）</div>
+    <div id="airWrap"><div id="airBar"></div></div>
+    <div id="topbar">
+      <div class="mini" id="btnSound">🔊 音</div>
+      <div class="mini" id="btnPause">⏸ 一時停止</div>
+    </div>
+  </div>
+
+  <div id="overlay"><div class="card" id="card"></div></div>
+
+  <div id="touch">
+    <div class="tbtn" id="tL">◀</div>
+    <div class="tbtn" id="tR">▶</div>
+    <div class="tbtn" id="tU">▲</div>
+    <div class="tbtn" id="tD">▼</div>
+    <div class="tbtn" id="tDig">潜る</div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* =========================================================
+   かにかにビーチ 🦀 — カニの横歩きサバイバル
+   1ファイル完結（HTML/CSS/JSのみ・外部素材なし）
+   ========================================================= */
+
+/* ---------- キャンバス準備 ---------- */
+const cvs = document.getElementById('game');
+const ctx = cvs.getContext('2d');
+const W = 960, H = 600;
+function fitDPR(){
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  cvs.width = Math.round(W * dpr);
+  cvs.height = Math.round(H * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+fitDPR();
+window.addEventListener('resize', fitDPR);
+
+/* ---------- 定数 ---------- */
+const SAND_TOP    = 178;   // 陸(遠景の海)と砂浜の境目
+const SEA_BASE    = 470;   // 平常時の波打ち際
+const PLAY_TOP    = 202;   // カニが動ける上端
+const PLAY_BOTTOM = 500;   // カニが動ける下端（浅瀬まで）
+const SIDE_SPD    = 335;   // 横歩き（速い）
+const FWD_SPD     = 168;   // 前後の歩み（遅い）
+const AIR_DRAIN   = 43;    // 潜っている間の息の減り
+const AIR_REFILL  = 34;    // 息の回復
+
+/* ---------- 状態 ---------- */
+const S = {
+  mode : 'title',      // title | play | pause | over
+  score: 0,
+  best : Number(localStorage.getItem('kani_beach_best') || 0),
+  lives: 3,
+  combo: 0, comboT: 0,
+  waveNo: 1,
+  time : 0,
+  wave : { phase:'calm', t:0 },
+  seaY : SEA_BASE,
+  shake: 0,
+  flash: 0
+};
+const P = {
+  x: 480, y: 430, dir: 1,
+  burrow: false, sink: 0, air: 100, inv: 0, surfLock: 0,
+  legT: 0, clawT: 0, look: 0, dead: false
+};
+let gulls = [], shells = [], parts = [], texts = [];
+let gullTimer = 2.2;
+
+/* ---------- 入力 ---------- */
+const keys = {};
+const KEYMAP = {
+  ArrowLeft:'left', KeyA:'left', ArrowRight:'right', KeyD:'right',
+  ArrowUp:'up',     KeyW:'up',   ArrowDown:'down',   KeyS:'down',
+  Space:'dig'
+};
+window.addEventListener('keydown', e=>{
+  const k = KEYMAP[e.code];
+  if (k){ keys[k] = true; e.preventDefault(); }
+  if (e.code === 'KeyP' || e.code === 'Escape'){ e.preventDefault(); togglePause(); }
+  if (e.code === 'KeyR') startGame();
+  if (e.code === 'KeyM') toggleSound();
+  if (e.code === 'Enter' && S.mode !== 'play') startGame();
+}, {passive:false});
+window.addEventListener('keyup', e=>{
+  const k = KEYMAP[e.code];
+  if (k){ keys[k] = false; e.preventDefault(); }
+}, {passive:false});
+
+/* ---------- タッチ操作 ---------- */
+const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+if (isTouch) document.getElementById('touch').classList.add('on');
+[['tL','left'],['tR','right'],['tU','up'],['tD','down'],['tDig','dig']].forEach(([id,key])=>{
+  const el = document.getElementById(id);
+  const on  = e=>{ e.preventDefault(); keys[key] = true;  el.classList.add('press'); };
+  const off = e=>{ e.preventDefault(); keys[key] = false; el.classList.remove('press'); };
+  el.addEventListener('pointerdown', on);
+  el.addEventListener('pointerup', off);
+  el.addEventListener('pointercancel', off);
+  el.addEventListener('pointerleave', off);
+});
+
+/* ---------- 音（WebAudio・外部ファイルなし） ---------- */
+let AC = null, muted = false;
+function ac(){
+  if (!AC){
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (Ctx) AC = new Ctx();
+  }
+  if (AC && AC.state === 'suspended') AC.resume();
+  return AC;
+}
+function tone(freq, dur, type='sine', vol=.15, slideTo=null, delay=0){
+  if (muted) return;
+  const a = ac(); if (!a) return;
+  const t0 = a.currentTime + delay;
+  const o = a.createOscillator(), g = a.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, t0);
+  if (slideTo) o.frequency.exponentialRampToValueAtTime(Math.max(30, slideTo), t0 + dur);
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(vol, t0 + 0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  o.connect(g).connect(a.destination);
+  o.start(t0); o.stop(t0 + dur + .02);
+}
+function noise(dur=.3, vol=.18, hp=400, delay=0){
+  if (muted) return;
+  const a = ac(); if (!a) return;
+  const t0 = a.currentTime + delay;
+  const n = Math.floor(a.sampleRate * dur);
+  const buf = a.createBuffer(1, n, a.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i=0;i<n;i++) d[i] = (Math.random()*2-1) * (1 - i/n);
+  const src = a.createBufferSource(); src.buffer = buf;
+  const f = a.createBiquadFilter(); f.type='highpass'; f.frequency.value = hp;
+  const g = a.createGain(); g.gain.value = vol;
+  src.connect(f).connect(g).connect(a.destination);
+  src.start(t0);
+}
+const SFX = {
+  pick(c){ tone(520 + Math.min(c,6)*90, .11, 'square', .13); tone(900 + Math.min(c,6)*120, .09, 'sine', .08, null, .05); },
+  dig(){ noise(.22, .16, 900); tone(180, .16, 'sine', .1, 90); },
+  surf(){ noise(.18, .13, 700); },
+  dive(){ tone(760, .35, 'sawtooth', .07, 180); noise(.3, .06, 1600); },
+  warn(){ tone(880, .12, 'square', .1); tone(880, .12, 'square', .1, null, .18); },
+  wave(){ noise(1.1, .22, 120); tone(72, 1.0, 'sine', .12, 44); },
+  hurt(){ tone(300, .22, 'square', .16, 90); noise(.25, .16, 300); },
+  wash(){ noise(1.0, .26, 200); tone(150, .7, 'sine', .14, 60); },
+  clear(){ tone(660,.1,'sine',.1); tone(880,.1,'sine',.1,null,.09); tone(1100,.16,'sine',.1,null,.18); },
+  over(){ [523,440,349,262].forEach((f,i)=> tone(f, .3, 'triangle', .13, null, i*.16)); }
+};
+function toggleSound(){
+  muted = !muted;
+  document.getElementById('btnSound').textContent = muted ? '🔇 音' : '🔊 音';
+}
+document.getElementById('btnSound').addEventListener('click', e=>{ e.stopPropagation(); toggleSound(); });
+document.getElementById('btnPause').addEventListener('click', e=>{ e.stopPropagation(); togglePause(); });
+
+/* ---------- 演出ヘルパー ---------- */
+function sandPuff(x, y, n=10, pow=90){
+  for (let i=0;i<n;i++){
+    const a = Math.random()*Math.PI*2, s = pow*(.3+Math.random()*.9);
+    parts.push({x, y, vx:Math.cos(a)*s, vy:Math.sin(a)*s - 30, life:.5+Math.random()*.4, max:.9,
+                size:2+Math.random()*4, col:'#e6caa0', g:260});
+  }
+}
+function splash(x, y, n=16){
+  for (let i=0;i<n;i++){
+    const a = -Math.PI/2 + (Math.random()-.5)*2.2, s = 120+Math.random()*220;
+    parts.push({x, y, vx:Math.cos(a)*s, vy:Math.sin(a)*s, life:.45+Math.random()*.5, max:.95,
+                size:2+Math.random()*4, col:'#bfefff', g:520});
+  }
+}
+function feathers(x, y){
+  for (let i=0;i<8;i++){
+    const a = Math.random()*Math.PI*2, s = 40+Math.random()*110;
+    parts.push({x, y, vx:Math.cos(a)*s, vy:Math.sin(a)*s-40, life:.9+Math.random()*.6, max:1.5,
+                size:3+Math.random()*3, col:'#ffffff', g:60});
+  }
+}
+function floatText(x, y, txt, col='#fff'){
+  texts.push({x, y, txt, col, life:.9, max:.9});
+}
+
+/* ---------- ゲーム進行 ---------- */
+function startGame(){
+  S.mode='play'; S.score=0; S.lives=3; S.combo=0; S.comboT=0; S.waveNo=1; S.time=0;
+  S.wave = {phase:'calm', t:0}; S.seaY = SEA_BASE; S.shake=0; S.flash=0;
+  P.x=480; P.y=430; P.dir=1; P.burrow=false; P.sink=0; P.air=100; P.inv=0; P.surfLock=0; P.dead=false;
+  gulls=[]; shells=[]; parts=[]; texts=[]; gullTimer=2.4;
+  for (let i=0;i<5;i++) spawnShell(true);
+  hideOverlay();
+  ac();
+  SFX.clear();
+}
+function togglePause(){
+  if (S.mode === 'play'){ S.mode='pause'; showPause(); }
+  else if (S.mode === 'pause'){ S.mode='play'; hideOverlay(); }
+}
+function gameOver(){
+  S.mode='over';
+  if (S.score > S.best){ S.best = S.score; localStorage.setItem('kani_beach_best', String(S.best)); var isNew = true; }
+  SFX.over();
+  showOver(!!isNew);
+}
+function damage(kind){
+  if (P.inv > 0 || S.mode !== 'play') return;
+  S.lives--; P.inv = 1.9; S.combo = 0;
+  S.shake = 16; S.flash = .35;
+  P.burrow = false; P.surfLock = .5;
+  if (kind === 'wash'){ SFX.wash(); splash(P.x, P.y, 26); sandPuff(P.x, P.y, 14); }
+  else { SFX.hurt(); feathers(P.x, P.y); sandPuff(P.x, P.y, 12); }
+  // 安全な場所へ吹き飛ぶ
+  P.y = Math.min(P.y, Math.max(PLAY_TOP + 12, S.seaY - 70));
+  floatText(P.x, P.y - 40, kind === 'wash' ? '流された！' : 'さらわれた！', '#ff8a72');
+  if (S.lives <= 0) gameOver();
+}
+
+/* ---------- 波 ---------- */
+function surgeTop(wn){ return Math.max(252, 338 - wn * 9); }
+function setPhase(p){
+  S.wave.phase = p; S.wave.t = 0;
+  if (p === 'warn'){ SFX.warn(); }
+  if (p === 'surge'){ SFX.wave(); S.shake = 6; }
+  if (p === 'recede'){ spawnShellsFromWave(); }
+}
+function updateWave(dt){
+  const w = S.wave, wn = S.waveNo;
+  w.t += dt;
+  let target = SEA_BASE, ease = 3.2;
+  if (w.phase === 'calm'){
+    target = SEA_BASE + Math.sin(S.time*1.1)*7;
+    if (w.t > Math.max(4.0, 9.0 - wn*0.40)) setPhase('warn');
+  } else if (w.phase === 'warn'){
+    target = SEA_BASE + 36;                       // 引き潮（警戒）
+    if (w.t > 2.6) setPhase('surge');
+  } else if (w.phase === 'surge'){
+    target = surgeTop(wn); ease = 9.5;
+    if (w.t > 0.55) setPhase('hold');
+  } else if (w.phase === 'hold'){
+    target = surgeTop(wn); ease = 5;
+    if (w.t > 0.95) setPhase('recede');
+  } else { // recede
+    target = SEA_BASE; ease = 2.2;
+    if (w.t > 2.2){
+      setPhase('calm');
+      S.waveNo++;
+      const bonus = 50 + S.waveNo * 10;
+      S.score += bonus;
+      floatText(480, 240, '波を乗り切った！ +' + bonus, '#9fe6ff');
+      SFX.clear();
+    }
+  }
+  S.seaY += (target - S.seaY) * Math.min(1, dt * ease);
+
+  // 大波に流される判定
+  const danger = (w.phase === 'surge' || w.phase === 'hold');
+  if (danger && !P.burrow && P.y > S.seaY - 6) damage('wash');
+}
+
+/* ---------- 貝・海藻 ---------- */
+function spawnShell(anywhere){
+  const y = anywhere
+    ? PLAY_TOP + 30 + Math.random() * (SEA_BASE - PLAY_TOP + 20)
+    : Math.max(PLAY_TOP + 10, S.seaY - 120 + Math.random() * 150);
+  const isWeed = Math.random() < 0.22;
+  shells.push({
+    x: 46 + Math.random() * (W - 92),
+    y: Math.min(PLAY_BOTTOM - 6, Math.max(PLAY_TOP + 8, y)),
+    type: isWeed ? 'weed' : 'shell',
+    born: S.time, ph: Math.random()*6.28
+  });
+}
+function spawnShellsFromWave(){
+  const n = 3 + Math.floor(Math.random()*3);
+  for (let i=0;i<n;i++) spawnShell(false);
+}
+function updateShells(dt){
+  if (shells.length < 7 && Math.random() < dt * 0.9) spawnShell(false);
+  for (let i=shells.length-1;i>=0;i--){
+    const s = shells[i];
+    const dx = s.x - P.x, dy = s.y - P.y;
+    if (!P.burrow && dx*dx + dy*dy < 30*30){
+      shells.splice(i,1);
+      S.combo = Math.min(9, S.combo + 1); S.comboT = 3.0;
+      const mult = Math.min(5, 1 + Math.floor(S.combo/2));
+      if (s.type === 'weed'){
+        P.air = Math.min(100, P.air + 40);
+        S.score += 5 * mult;
+        floatText(s.x, s.y-18, '海藻 +' + (5*mult) + ' / 息回復', '#8cf5a3');
+      } else {
+        S.score += 10 * mult;
+        floatText(s.x, s.y-18, '+' + (10*mult) + (mult>1 ? '  ×' + mult : ''), '#ffd76a');
+      }
+      for (let k=0;k<8;k++){
+        const a = Math.random()*6.28, sp = 40+Math.random()*90;
+        parts.push({x:s.x, y:s.y, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp-30, life:.4+Math.random()*.3, max:.7,
+                    size:2+Math.random()*3, col: s.type==='weed' ? '#8cf5a3' : '#ffe9a8', g:200});
+      }
+      SFX.pick(mult);
+    }
+  }
+}
+
+/* ---------- カモメ ---------- */
+function spawnGull(){
+  const fromLeft = Math.random() < 0.5;
+  gulls.push({
+    x: fromLeft ? -60 : W + 60, y: 120 + Math.random()*90,
+    vx: (fromLeft ? 1 : -1) * (70 + Math.random()*60), vy: 0,
+    alt: 150, state: 'circle', t: 0, wing: Math.random()*6.28,
+    tx: 480, ty: 400, hit: false
+  });
+}
+function updateGulls(dt){
+  const maxGulls = Math.min(6, 3 + Math.floor(S.waveNo / 4));
+  if (gulls.length < maxGulls){
+    gullTimer -= dt;
+    if (gullTimer <= 0){
+      spawnGull();
+      gullTimer = Math.max(1.3, 5.0 - S.waveNo * 0.28) * (0.8 + Math.random()*0.7);
+    }
+  }
+  const diveSpd = 1;
+  for (let i=gulls.length-1;i>=0;i--){
+    const g = gulls[i];
+    g.t += dt; g.wing += dt * (g.state === 'dive' ? 26 : 13);
+    if (g.state === 'circle'){
+      g.x += g.vx * dt;
+      g.y = 120 + Math.sin(g.t*2 + g.wing*.1) * 34 + Math.sin(g.t*.7)*20;
+      g.alt = 170;
+      if (g.t > 0.9 + Math.random()*1.6){
+        g.state = 'aim'; g.t = 0;
+        g.tx = P.x + P.dir * 0; g.ty = P.y;
+        g.aimTime = Math.max(0.72, 1.40 - S.waveNo * 0.05);
+        SFX.dive();
+      }
+    } else if (g.state === 'aim'){
+      // 狙いを少しだけ更新（動くと外れやすい）
+      g.tx += (P.x - g.tx) * Math.min(1, dt * 1.15);
+      g.ty += (P.y - g.ty) * Math.min(1, dt * 1.15);
+      const ty = Math.min(PLAY_BOTTOM, Math.max(PLAY_TOP, g.ty));
+      const targetY = ty - 190;
+      g.x += (g.tx - g.x) * Math.min(1, dt*3.2);
+      g.y += (targetY - g.y) * Math.min(1, dt*3.2);
+      g.alt = ty - g.y;
+      if (g.t > g.aimTime){ g.state='dive'; g.t=0; g.sx=g.x; g.sy=g.y; g.stx=g.x; g.sty=ty; }
+    } else if (g.state === 'dive'){
+      const dur = 0.42 * diveSpd;
+      const k = Math.min(1, g.t / dur);
+      const e = k*k;
+      g.x = g.sx + (g.tx - g.sx) * e;
+      g.y = g.sy + (g.sty - g.sy) * e;
+      g.alt = (1 - e) * 190;
+      if (k >= 1){
+        // 着地
+        splash(g.x, g.sty, 14);
+        const dx = g.x - P.x, dy = g.sty - P.y;
+        if (dx*dx + dy*dy < 44*44){
+          if (P.burrow){ sandPuff(P.x, P.y, 16, 130); SFX.surf(); floatText(P.x, P.y-40, 'セーフ！', '#8cf5a3'); }
+          else damage('gull');
+        } else if (!P.burrow){
+          sandPuff(g.x, g.sty, 8, 70);
+        }
+        g.state = 'escape'; g.t = 0;
+      }
+    } else { // escape
+      g.y -= 300 * dt;
+      g.x += (g.x < W/2 ? -1 : 1) * 190 * dt;
+      g.alt += 260 * dt;
+      if (g.y < -80) gulls.splice(i,1);
+    }
+  }
+}
+
+/* ---------- プレイヤー ---------- */
+function updatePlayer(dt){
+  P.inv = Math.max(0, P.inv - dt);
+  P.surfLock = Math.max(0, P.surfLock - dt);
+  S.comboT = Math.max(0, S.comboT - dt);
+  if (S.comboT <= 0) S.combo = 0;
+
+  // 潜る
+  if (keys.dig && !P.burrow && P.air > 3 && P.surfLock <= 0){
+    P.burrow = true; sandPuff(P.x, P.y, 12); SFX.dig();
+  }
+  if (P.burrow){
+    P.air -= AIR_DRAIN * dt;
+    if (P.air <= 0 || !keys.dig){
+      P.air = Math.max(0, P.air);
+      P.burrow = false; P.surfLock = 0.35; sandPuff(P.x, P.y, 10); SFX.surf();
+    }
+  } else {
+    P.air = Math.min(100, P.air + AIR_REFILL * dt);
+  }
+  P.sink += ((P.burrow ? 1 : 0) - P.sink) * Math.min(1, dt * 12);
+
+  // 移動（カニは横歩きが速い）
+  let mx = 0, my = 0;
+  if (!P.burrow){
+    if (keys.left)  mx -= 1;
+    if (keys.right) mx += 1;
+    if (keys.up)    my -= 1;
+    if (keys.down)  my += 1;
+  }
+  let tx = mx * SIDE_SPD, ty = my * FWD_SPD;
+  if (mx && my){ tx *= 0.82; ty *= 0.82; }
+  P.x += tx * dt; P.y += ty * dt;
+  if (mx) P.dir = mx > 0 ? 1 : -1;
+  P.look += ((mx || my ? 1 : 0) - P.look) * Math.min(1, dt*6);
+
+  P.x = Math.max(34, Math.min(W-34, P.x));
+  P.y = Math.max(PLAY_TOP, Math.min(PLAY_BOTTOM, P.y));
+
+  const spd = Math.hypot(tx, ty);
+  P.legT  += dt * (2 + spd * 0.035);
+  P.clawT += dt * (1.6 + Math.sin(S.time*3)*0.5 + (P.burrow?0:Math.abs(mx)*2.2));
+
+  // 水しぶき（浅瀬にいる時）
+  if (P.y > S.seaY + 6 && Math.random() < dt*8){
+    parts.push({x:P.x+(Math.random()-.5)*30, y:S.seaY+2, vx:(Math.random()-.5)*40, vy:-30-Math.random()*40,
+                life:.4, max:.4, size:2, col:'#dff6ff', g:300});
+  }
+}
+
+/* ---------- 更新 ---------- */
+function update(dt){
+  S.time += dt;
+  if (S.mode !== 'play') return;
+  updatePlayer(dt);
+  updateWave(dt);
+  updateGulls(dt);
+  updateShells(dt);
+
+  for (let i=parts.length-1;i>=0;i--){
+    const p = parts[i];
+    p.life -= dt;
+    p.vy += p.g * dt;
+    p.x += p.vx * dt; p.y += p.vy * dt;
+    if (p.life <= 0) parts.splice(i,1);
+  }
+  for (let i=texts.length-1;i>=0;i--){
+    const t = texts[i]; t.life -= dt; t.y -= 34*dt;
+    if (t.life <= 0) texts.splice(i,1);
+  }
+  S.shake = Math.max(0, S.shake - dt*38);
+  S.flash = Math.max(0, S.flash - dt*1.6);
+}
+
+/* =========================================================
+   描画
+   ========================================================= */
+function drawBackground(){
+  // 空
+  let g = ctx.createLinearGradient(0,0,0,SAND_TOP);
+  g.addColorStop(0,'#5ec8f0'); g.addColorStop(.6,'#a9e6fb'); g.addColorStop(1,'#d9f4ff');
+  ctx.fillStyle = g; ctx.fillRect(0,0,W,SAND_TOP);
+
+  // 太陽
+  ctx.save();
+  ctx.globalAlpha = .95;
+  ctx.fillStyle = '#fff3b0';
+  ctx.beginPath(); ctx.arc(842, 56, 32, 0, 6.283); ctx.fill();
+  ctx.globalAlpha = .28; ctx.fillStyle='#fff6c9';
+  ctx.beginPath(); ctx.arc(842, 56, 52, 0, 6.283); ctx.fill();
+  ctx.restore();
+
+  // 雲
+  ctx.fillStyle = 'rgba(255,255,255,.88)';
+  const clouds = [[120,52,1],[320,34,.75],[600,66,.9],[210,86,.6]];
+  clouds.forEach(([cx,cy,sc])=>{
+    const x = (cx + S.time*4) % (W+220) - 110;
+    ctx.beginPath();
+    ctx.ellipse(x, cy, 40*sc, 17*sc, 0,0,6.283);
+    ctx.ellipse(x+26*sc, cy-9*sc, 26*sc, 15*sc, 0,0,6.283);
+    ctx.ellipse(x-28*sc, cy+3*sc, 24*sc, 12*sc, 0,0,6.283);
+    ctx.fill();
+  });
+
+  // 遠景の海
+  g = ctx.createLinearGradient(0,96,0,SAND_TOP);
+  g.addColorStop(0,'#1f6f9e'); g.addColorStop(1,'#2fa4c9');
+  ctx.fillStyle = g; ctx.fillRect(0,96,W,SAND_TOP-96);
+  ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 2;
+  for (let i=0;i<9;i++){
+    const y = 106 + i*8;
+    ctx.globalAlpha = .18 + (i%2)*.1;
+    ctx.beginPath();
+    for (let x=0;x<=W;x+=24){
+      const yy = y + Math.sin((x*0.02) + S.time*1.4 + i)*2.2;
+      x === 0 ? ctx.moveTo(x,yy) : ctx.lineTo(x,yy);
+    }
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+
+  // 砂浜
+  g = ctx.createLinearGradient(0,SAND_TOP,0,H);
+  g.addColorStop(0,'#efd9ab'); g.addColorStop(.35,'#e8cb98'); g.addColorStop(1,'#d9b681');
+  ctx.fillStyle = g; ctx.fillRect(0,SAND_TOP,W,H-SAND_TOP);
+
+  // 浜辺の飾り（当たり判定なし）
+  drawParasol(96, SAND_TOP-4, '#ff5f6d');
+  drawParasol(178, SAND_TOP-2, '#4fc3f7', .82);
+  drawParasol(742, SAND_TOP-4, '#ffd166', .9);
+  // 岩
+  ctx.fillStyle = '#a89478';
+  [[300,SAND_TOP+2,26,15],[560,SAND_TOP+1,34,17],[880,SAND_TOP+3,22,13]].forEach(([x,y,rx,ry])=>{
+    ctx.beginPath(); ctx.ellipse(x,y,rx,ry,0,Math.PI,6.283); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.18)';
+    ctx.beginPath(); ctx.ellipse(x-rx*.3,y-ry*.4,rx*.5,ry*.42,0,Math.PI,6.283); ctx.fill();
+    ctx.fillStyle = '#a89478';
+  });
+  // 砂の粒感
+  ctx.save();
+  for (let i=0;i<190;i++){
+    const x = (i*137.5) % W, y = SAND_TOP + 12 + ((i*61.7) % (H-SAND_TOP-12));
+    ctx.globalAlpha = .10 + ((i*37)%10)/60;
+    ctx.fillStyle = i%3 ? '#fff5d6' : '#b99a68';
+    ctx.fillRect(x, y, 2, 2);
+  }
+  ctx.restore();
+}
+function drawParasol(x, y, col, sc=1){
+  ctx.save(); ctx.translate(x,y); ctx.scale(sc,sc);
+  ctx.strokeStyle = '#8a6b45'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,-46); ctx.stroke();
+  ctx.fillStyle = col;
+  ctx.beginPath();
+  ctx.moveTo(-40,-44);
+  ctx.quadraticCurveTo(0,-72, 40,-44);
+  ctx.quadraticCurveTo(20,-38, 0,-46);
+  ctx.quadraticCurveTo(-20,-38, -40,-44);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(0,0,0,.12)';
+  ctx.beginPath(); ctx.moveTo(0,-46); ctx.lineTo(0,-70); ctx.lineTo(14,-62); ctx.fill();
+  ctx.restore();
+}
+
+function drawWater(){
+  const danger = (S.wave.phase === 'surge' || S.wave.phase === 'hold');
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(0, H);
+  for (let x=0;x<=W;x+=12){
+    const y = S.seaY
+      + Math.sin(x*0.018 + S.time*2.2)*5
+      + Math.sin(x*0.041 - S.time*3.1)*3;
+    ctx.lineTo(x, y);
+  }
+  ctx.lineTo(W,H); ctx.closePath();
+  const g = ctx.createLinearGradient(0, S.seaY-14, 0, H);
+  if (danger){ g.addColorStop(0,'rgba(150,225,245,.80)'); g.addColorStop(.35,'rgba(60,160,215,.90)'); g.addColorStop(1,'rgba(20,90,150,.96)'); }
+  else { g.addColorStop(0,'rgba(160,225,245,.62)'); g.addColorStop(.4,'rgba(80,175,220,.75)'); g.addColorStop(1,'rgba(30,110,170,.86)'); }
+  ctx.fillStyle = g; ctx.fill();
+
+  // 泡のキワ
+  ctx.strokeStyle = danger ? 'rgba(255,255,255,.95)' : 'rgba(255,255,255,.7)';
+  ctx.lineWidth = danger ? 5 : 3;
+  ctx.beginPath();
+  for (let x=0;x<=W;x+=12){
+    const y = S.seaY + Math.sin(x*0.018 + S.time*2.2)*5 + Math.sin(x*0.041 - S.time*3.1)*3;
+    x===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // 白波のライン
+  ctx.strokeStyle = 'rgba(255,255,255,.30)'; ctx.lineWidth = 2;
+  for (let k=1;k<=3;k++){
+    ctx.beginPath();
+    for (let x=0;x<=W;x+=16){
+      const y = S.seaY + k*26 + Math.sin(x*0.03 + S.time*(1.2+k*0.5))*(3+k);
+      x===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+  // サーフ（波の先端の泡粒）
+  if (danger){
+    ctx.fillStyle = 'rgba(255,255,255,.85)';
+    for (let i=0;i<50;i++){
+      const x = (i*97 + S.time*260) % W;
+      const y = S.seaY + Math.sin(x*0.018 + S.time*2.2)*5 + Math.random()*22;
+      ctx.beginPath(); ctx.arc(x, y, 1.5 + Math.random()*3, 0, 6.283); ctx.fill();
+    }
+  }
+  ctx.restore();
+}
+
+function drawShell(s){
+  const bob = Math.sin(S.time*2 + s.ph) * 2;
+  const inWater = s.y > S.seaY;
+  ctx.save();
+  ctx.translate(s.x, s.y + bob);
+  ctx.globalAlpha = inWater ? .55 : 1;
+  if (s.type === 'shell'){
+    // アサリの貝殻
+    ctx.rotate(Math.sin(s.ph)*0.25);
+    const grd = ctx.createLinearGradient(0,-10,0,10);
+    grd.addColorStop(0,'#fff4e2'); grd.addColorStop(1,'#f0c9a8');
+    ctx.fillStyle = grd;
+    ctx.beginPath(); ctx.ellipse(0,2,13,10,0,Math.PI,6.283); ctx.fill();
+    ctx.strokeStyle = '#d9a77f'; ctx.lineWidth = 1.4;
+    for (let i=-2;i<=2;i++){
+      ctx.beginPath(); ctx.moveTo(0,2); ctx.lineTo(i*5.2, -7); ctx.stroke();
+    }
+    ctx.strokeStyle = '#c98f68'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.ellipse(0,2,13,10,0,Math.PI,6.283); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,.55)';
+    ctx.beginPath(); ctx.ellipse(-5,-2,4,2.4,-0.4,0,6.283); ctx.fill();
+  } else {
+    // 海藻（息回復）
+    ctx.strokeStyle = '#4caf6d'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+    for (let i=-1;i<=1;i++){
+      ctx.beginPath();
+      ctx.moveTo(i*6, 12);
+      ctx.quadraticCurveTo(i*10 + Math.sin(S.time*3+i)*5, 0, i*5 + Math.sin(S.time*3+i)*8, -14);
+      ctx.stroke();
+    }
+    ctx.fillStyle = '#8cf5a3';
+    ctx.beginPath(); ctx.ellipse(0,-16,4,3,0,0,6.283); ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawGull(g){
+  // 影
+  const sy = g.y + g.alt;
+  const a = Math.max(0.05, 0.34 * (1 - g.alt/260));
+  ctx.save();
+  ctx.globalAlpha = a; ctx.fillStyle = '#000';
+  ctx.beginPath(); ctx.ellipse(g.x, sy, 12 + g.alt*0.055, 4 + g.alt*0.02, 0,0,6.283); ctx.fill();
+  ctx.restore();
+
+  // 狙いマーク
+  if (g.state === 'aim'){
+    const k = g.t / g.aimTime;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,70,60,' + (0.35 + 0.5*k) + ')';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.ellipse(g.x, sy, 46 - 22*k, 18 - 9*k, 0,0,6.283); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(g.x-14, sy); ctx.lineTo(g.x+14, sy);
+    ctx.moveTo(g.x, sy-10); ctx.lineTo(g.x, sy+10); ctx.stroke();
+    ctx.restore();
+  }
+
+  // カモメ本体
+  ctx.save();
+  ctx.translate(g.x, g.y);
+  const flip = (g.state === 'dive') ? 1 : (Math.cos(g.t*2)>0 ? 1 : 1);
+  const flap = Math.sin(g.wing) * (g.state === 'dive' ? 0.15 : 1);
+  ctx.rotate(g.state === 'dive' ? 0.35 : 0);
+  // 翼
+  ctx.fillStyle = '#f4f7fb';
+  ctx.strokeStyle = '#c8d4e0'; ctx.lineWidth = 1.5;
+  [-1, 1].forEach(s=>{
+    ctx.save();
+    ctx.translate(s*4, -2);
+    ctx.rotate(s * (0.35 + flap*0.55) * (g.state==='dive'?0.2:1));
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+    ctx.quadraticCurveTo(s*26, -12 - flap*10, s*46, 2 - flap*6);
+    ctx.quadraticCurveTo(s*24, 8, 0, 4);
+    ctx.fill(); ctx.stroke();
+    ctx.restore();
+  });
+  // 胴体
+  const bg = ctx.createLinearGradient(0,-12,0,12);
+  bg.addColorStop(0,'#ffffff'); bg.addColorStop(1,'#dde6ef');
+  ctx.fillStyle = bg;
+  ctx.beginPath(); ctx.ellipse(0, 2, 14, 8, 0,0,6.283); ctx.fill();
+  ctx.strokeStyle = '#c8d4e0'; ctx.stroke();
+  // 頭とくちばし
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath(); ctx.arc(flip*10, -6, 7, 0, 6.283); ctx.fill();
+  ctx.strokeStyle = '#c8d4e0'; ctx.stroke();
+  ctx.fillStyle = '#ffb13b';
+  ctx.beginPath();
+  ctx.moveTo(flip*16,-6); ctx.lineTo(flip*27,-3.5); ctx.lineTo(flip*16,-1);
+  ctx.closePath(); ctx.fill();
+  // 目
+  ctx.fillStyle = '#1b2733';
+  ctx.beginPath(); ctx.arc(flip*12, -8, 1.9, 0, 6.283); ctx.fill();
+  // 尾
+  ctx.fillStyle = '#e7eef6';
+  ctx.beginPath(); ctx.moveTo(-10,0); ctx.lineTo(-22,-5); ctx.lineTo(-20,4); ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+
+function drawCrab(){
+  const sink = P.sink;
+  const blink = P.inv > 0 && Math.floor(P.inv * 12) % 2 === 0;
+  const sc = 1 - sink * 0.18;
+
+  // 影
+  ctx.save();
+  ctx.globalAlpha = 0.20 * (1 - sink*0.7);
+  ctx.fillStyle = '#000';
+  ctx.beginPath(); ctx.ellipse(P.x, P.y + 17, 27, 9, 0,0,6.283); ctx.fill();
+  ctx.restore();
+
+  if (blink) return;
+
+  ctx.save();
+  ctx.translate(P.x, P.y + sink*6);
+  ctx.scale(P.dir * sc, sc);
+  ctx.translate(0, sink*15);
+
+  const t = P.legT;
+  // 脚（左右3本）
+  ctx.strokeStyle = '#c8362a'; ctx.lineWidth = 5; ctx.lineCap = 'round';
+  for (let s=-1; s<=1; s+=2){
+    for (let i=0;i<3;i++){
+      const ph = t + i*0.85 + (s>0 ? 0 : Math.PI);
+      const bx = s*15, by = -4 + i*7;
+      const kx = s*(26 + Math.sin(ph)*4), ky = by + 2 - Math.cos(ph)*5;
+      const fx = kx + s*11, fy = ky + 15 + Math.cos(ph)*5;
+      ctx.beginPath(); ctx.moveTo(bx, by);
+      ctx.quadraticCurveTo(kx, ky-3, fx, fy); ctx.stroke();
+    }
+  }
+
+  // ハサミ
+  const open = 0.30 + Math.sin(P.clawT*2)*0.28;
+  for (let s=-1; s<=1; s+=2){
+    const ang = s * (0.55 + Math.sin(P.clawT*2 + (s>0?0:1.2))*0.10);
+    ctx.save();
+    ctx.translate(s*19, -9);
+    ctx.rotate(ang);
+    ctx.strokeStyle = '#d94233'; ctx.lineWidth = 7; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(s*4, -13); ctx.stroke();
+    // 鋏
+    ctx.translate(s*4, -16);
+    const grd = ctx.createLinearGradient(0,-8,0,6);
+    grd.addColorStop(0,'#ff8a6b'); grd.addColorStop(1,'#cf3320');
+    ctx.fillStyle = grd;
+    [-1, 1].forEach(d=>{
+      ctx.save(); ctx.rotate(d*open);
+      ctx.beginPath();
+      ctx.moveTo(0,0);
+      ctx.quadraticCurveTo(s*d*3 + d*7, -10, d*11 + s*2, -2);
+      ctx.quadraticCurveTo(d*7, 4, 0, 2);
+      ctx.fill();
+      ctx.restore();
+    });
+    ctx.restore();
+  }
+
+  // 甲羅
+  const bg = ctx.createLinearGradient(0,-24,0,24);
+  bg.addColorStop(0,'#ff9878'); bg.addColorStop(.45,'#ec4a2c'); bg.addColorStop(1,'#a8240f');
+  ctx.fillStyle = bg;
+  ctx.beginPath(); ctx.ellipse(0,0,28,22,0,0,6.283); ctx.fill();
+  // トゲ
+  ctx.fillStyle = '#a8240f';
+  [-1,1].forEach(s=>{
+    for (let i=0;i<3;i++){
+      const a = -0.7 + i*0.7;
+      ctx.beginPath();
+      ctx.moveTo(s*26*Math.cos(a), 18*Math.sin(a)+2);
+      ctx.lineTo(s*34*Math.cos(a), 21*Math.sin(a)+4);
+      ctx.lineTo(s*25*Math.cos(a), 22*Math.sin(a)+8);
+      ctx.fill();
+    }
+  });
+  // 甲羅のツヤ
+  ctx.fillStyle = 'rgba(255,255,255,.30)';
+  ctx.beginPath(); ctx.ellipse(-9,-9,9,5,-0.5,0,6.283); ctx.fill();
+  ctx.fillStyle = 'rgba(0,0,0,.14)';
+  ctx.beginPath(); ctx.ellipse(6,7,10,5,0.3,0,6.283); ctx.fill();
+
+  // 砂に潜る → 砂山
+  if (sink > 0.04){
+    const mg = ctx.createLinearGradient(0,-20,0,18);
+    mg.addColorStop(0,'#f3e0b6'); mg.addColorStop(1,'#d9b681');
+    ctx.fillStyle = mg;
+    ctx.beginPath(); ctx.ellipse(0, 2, 33, 19, 0,0,6.283); ctx.fill();
+    ctx.fillStyle = 'rgba(0,0,0,.10)';
+    ctx.beginPath(); ctx.ellipse(4, 12, 24, 8, 0,0,6.283); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.35)';
+    ctx.beginPath(); ctx.ellipse(-8, -6, 14, 5, -0.2,0,6.283); ctx.fill();
+  }
+
+  // 目（砂山の上から覗かせる）
+  const eyeY = -26 - Math.sin(S.time*2)*1.2;
+  [-8, 8].forEach(ex=>{
+    ctx.strokeStyle = '#c8362a'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(ex*0.75, -14); ctx.lineTo(ex, eyeY+4); ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(ex, eyeY, 6.2, 0, 6.283); ctx.fill();
+    ctx.strokeStyle = '#a8240f'; ctx.lineWidth = 1.2; ctx.stroke();
+    const look = (P.dir * 1.6) + P.look * 0.8;
+    ctx.fillStyle = '#16202b';
+    ctx.beginPath(); ctx.arc(ex + look, eyeY - 0.6, 3.1, 0, 6.283); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.9)';
+    ctx.beginPath(); ctx.arc(ex + look + 1.2, eyeY - 2.2, 1.1, 0, 6.283); ctx.fill();
+  });
+
+  ctx.restore();
+
+  // 泡（潜っている時）
+  if (sink > 0.3 && Math.random() < 0.22){
+    parts.push({x:P.x + (Math.random()-.5)*34, y:P.y - 8, vx:(Math.random()-.5)*14, vy:-40-Math.random()*30,
+                life:.5, max:.5, size:1.6+Math.random()*2.4, col:'rgba(220,248,255,.9)', g:-30});
+  }
+}
+
+function drawParticles(){
+  parts.forEach(p=>{
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, Math.min(1, p.life / p.max));
+    ctx.fillStyle = p.col;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, 6.283); ctx.fill();
+    ctx.restore();
+  });
+  texts.forEach(t=>{
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, t.life / t.max);
+    ctx.font = '800 20px "Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif';
+    ctx.textAlign = 'center';
+    ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(0,0,0,.45)';
+    ctx.strokeText(t.txt, t.x, t.y); ctx.fillStyle = t.col; ctx.fillText(t.txt, t.x, t.y);
+    ctx.restore();
+  });
+}
+
+function drawWarning(){
+  const w = S.wave;
+  if (w.phase !== 'warn') return;
+  const k = w.t / 2.6;
+  ctx.save();
+  // 画面の縁を赤く
+  const blink = 0.20 + Math.abs(Math.sin(w.t*7)) * 0.30;
+  const g = ctx.createLinearGradient(0, H, 0, H-160);
+  g.addColorStop(0, 'rgba(255,60,40,' + blink + ')');
+  g.addColorStop(1, 'rgba(255,60,40,0)');
+  ctx.fillStyle = g; ctx.fillRect(0, H-160, W, 160);
+  // 引き潮のライン
+  ctx.strokeStyle = 'rgba(255,255,255,' + (0.3 + 0.4*Math.abs(Math.sin(w.t*7))) + ')';
+  ctx.setLineDash([16, 12]); ctx.lineWidth = 3;
+  ctx.beginPath();
+  const y = surgeTop(S.waveNo);
+  for (let x=0;x<=W;x+=10) ctx.lineTo(x, y);
+  ctx.stroke(); ctx.setLineDash([]);
+  ctx.restore();
+}
+
+function render(){
+  ctx.save();
+  if (S.shake > 0.2){
+    ctx.translate((Math.random()-.5)*S.shake, (Math.random()-.5)*S.shake);
+  }
+  drawBackground();
+  drawWarning();
+  drawWater();
+  shells.forEach(drawShell);
+  gulls.forEach(g=>{ if (g.state !== 'escape') drawGull(g); });
+  drawCrab();
+  gulls.forEach(g=>{ if (g.state === 'escape') drawGull(g); });
+  drawParticles();
+  ctx.restore();
+
+  if (S.flash > 0){
+    ctx.save();
+    ctx.fillStyle = 'rgba(255,70,50,' + (S.flash*0.5) + ')';
+    ctx.fillRect(0,0,W,H);
+    ctx.restore();
+  }
+}
+
+/* =========================================================
+   HUD / 画面
+   ========================================================= */
+const elScore = document.querySelector('#score b');
+const elBest  = document.querySelector('#best b');
+const elWave  = document.getElementById('waveNo');
+const elLives = document.getElementById('lives');
+const elAir   = document.getElementById('airBar');
+const elMsg   = document.getElementById('waveMsg');
+const overlay = document.getElementById('overlay');
+const card    = document.getElementById('card');
+
+function updateHUD(){
+  elScore.textContent = S.score;
+  elBest.textContent  = Math.max(S.best, S.score);
+  elWave.textContent  = S.waveNo;
+  if (elLives.children.length !== 3){
+    elLives.innerHTML = '';
+    for (let i=0;i<3;i++){ const d = document.createElement('div'); d.className='life'; elLives.appendChild(d); }
+  }
+  [...elLives.children].forEach((c,i)=> c.classList.toggle('gone', i >= S.lives));
+  elAir.style.width = P.air + '%';
+  elAir.classList.toggle('low', P.air < 35);
+
+  const w = S.wave;
+  if (S.mode === 'play'){
+    if (w.phase === 'warn'){
+      elMsg.style.opacity = 1;
+      elMsg.style.color = '#ff6b52';
+      elMsg.innerHTML = '🌊 大波が来る！<span id="waveSub">高い場所へ逃げるか、砂に潜れ！</span>';
+    } else if (w.phase === 'surge' || w.phase === 'hold'){
+      elMsg.style.opacity = 1;
+      elMsg.style.color = '#ffffff';
+      elMsg.innerHTML = '🌊 ざぶーん！！';
+    } else if (S.combo >= 2){
+      elMsg.style.opacity = 1;
+      elMsg.style.color = '#ffd76a';
+      elMsg.innerHTML = '×' + Math.min(5, 1 + Math.floor(S.combo/2)) + ' コンボ！';
+    } else {
+      elMsg.style.opacity = 0;
+    }
+  } else {
+    elMsg.style.opacity = 0;
+  }
+}
+function hideOverlay(){ overlay.classList.add('hidden'); }
+
+const RULES = `
+<div class="rules">
+  🦀 <b>カニは横歩きが速い！</b> 左右移動は速く、前後はノロノロ。<br>
+  🪙 <b>貝</b>を拾うとスコア、<b>海藻</b>で息(AIR)回復。続けて拾うとコンボ倍率アップ！<br>
+  🕊 <b>カモメ</b>が急降下！赤い照準が出たら <span class="k">Space</span> で<b>砂に潜れ</b>ば無敵。<br>
+  🌊 <b>大波</b>が来る！波打ち際より下にいると流される。<b>陸へ逃げる or 潜る</b>。<br>
+  ⌨ <span class="k">←</span><span class="k">→</span><span class="k">↑</span><span class="k">↓</span> 移動 / <span class="k">Space</span> 潜る / <span class="k">P</span> 一時停止 / <span class="k">R</span> リスタート
+</div>`;
+
+function showTitle(){
+  S.mode = 'title';
+  card.innerHTML = `
+    <h1>かにかにビーチ 🦀</h1>
+    <div class="sub">カニの横歩きサバイバル</div>
+    ${RULES}
+    <div><div class="btn" id="startBtn">あそぶ（Enter）</div></div>
+    <div class="hint">BEST: ${S.best} 点　※ スマホは画面下のボタンで操作</div>`;
+  overlay.classList.remove('hidden');
+  document.getElementById('startBtn').addEventListener('click', startGame);
+}
+function showPause(){
+  card.innerHTML = `
+    <h1>一時停止</h1>
+    <div class="sub">のんびり…🦀</div>
+    <div><div class="btn" id="resumeBtn">つづける（P）</div></div>
+    <div class="hint">R で最初から</div>`;
+  overlay.classList.remove('hidden');
+  document.getElementById('resumeBtn').addEventListener('click', togglePause);
+}
+function showOver(isNew){
+  card.innerHTML = `
+    <h1>かに、されました 🦀</h1>
+    <div class="stats">
+      SCORE <b>${S.score}</b>
+      WAVE ${S.waveNo} まで生きのびた
+      ${isNew ? '<div class="newbest">🎉 新記録！</div>' : 'BEST: ' + S.best}
+    </div>
+    <div><div class="btn" id="againBtn">もう一度（R）</div></div>
+    <div class="hint">Enter でもリスタート</div>`;
+  overlay.classList.remove('hidden');
+  document.getElementById('againBtn').addEventListener('click', startGame);
+}
+
+/* =========================================================
+   メインループ
+   ========================================================= */
+let last = performance.now();
+function loop(now){
+  let dt = (now - last) / 1000;
+  last = now;
+  if (!(dt > 0)) dt = 0;      // 負値・NaN対策
+  if (dt > 0.05) dt = 0.05;   // タブ復帰時の暴走防止
+  update(dt);
+  render();
+  updateHUD();
+  requestAnimationFrame(loop);
+}
+showTitle();
+requestAnimationFrame(loop);
+
+/* 初回タップ/クリックで音声を有効化 */
+window.addEventListener('pointerdown', function once(){ ac(); window.removeEventListener('pointerdown', once); });
+</script>
+</body>
+</html>
