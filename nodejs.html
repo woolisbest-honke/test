@@ -1,0 +1,172 @@
+
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{box-sizing:border-box} :root{color-scheme:dark;--bg:#0b1020;--panel:#11182d;--panel2:#0f1628;--text:#e7eefc;--muted:#9fb0d0;--border:#263253;--accent:#7c9cff;--accent2:#7ee0c3;--danger:#ff7a90;--shadow:0 18px 40px rgba(0,0,0,.28)} body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top,#16213f 0%,#0b1020 48%,#070b14 100%);color:var(--text)} .app-shell{max-width:1200px;margin:0 auto;padding:16px;display:grid;gap:16px} .hero,.panel,.stats article{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow)} .hero{display:flex;gap:14px;align-items:flex-start;padding:18px} .hero__badge{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),#9a7cff);font-size:1.5rem;flex:0 0 auto} .eyebrow{margin:0 0 6px;color:var(--accent2);font-weight:700;letter-spacing:.08em} h1,h2,h3,p,ul,ol{margin-top:0} h1{font-size:clamp(1.5rem,3vw,2.7rem);line-height:1.15;margin-bottom:10px} .hero__lead,.panel__header p,.search span,.select span,.stats span,.detail-card p,.steps{color:var(--muted)} .toolbar,.controls,.memo-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:end} .toolbar,.panel{padding:16px} .search,.select{display:grid;gap:6px;min-width:min(100%,220px);flex:1} input,select,textarea,button{font:inherit} input,select,textarea{width:100%;background:#0b1222;color:var(--text);border:1px solid var(--border);border-radius:14px;padding:12px 14px;outline:none} input:focus,select:focus,textarea:focus,button:focus{box-shadow:0 0 0 3px rgba(124,156,255,.25);border-color:var(--accent)} .btn{border:0;border-radius:14px;padding:12px 14px;background:linear-gradient(135deg,var(--accent),#9a7cff);color:white;font-weight:700;cursor:pointer} .btn--ghost{background:#16213a;border:1px solid var(--border)} .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px} .stats article{padding:16px;text-align:center} .stats strong{display:block;font-size:1.6rem;margin-bottom:4px} .layout{display:grid;grid-template-columns:320px minmax(0,1fr);gap:16px} .panel--sidebar,.panel--content,.panel--detail{min-width:0} .panel__header{display:grid;gap:6px;margin-bottom:14px} .steps{padding-left:18px;display:grid;gap:10px} .note-box{margin-top:18px;padding-top:14px;border-top:1px solid var(--border)} textarea{resize:vertical;min-height:160px} .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px} .chip{border:1px solid var(--border);background:#10192d;color:var(--text);border-radius:999px;padding:9px 12px;cursor:pointer} .chip[aria-pressed="true"]{background:rgba(124,156,255,.18);border-color:var(--accent);color:#dbe5ff} .card-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px} .card{padding:14px;border-radius:18px;background:var(--panel2);border:1px solid var(--border);cursor:pointer;display:grid;gap:10px;text-align:left;color:inherit} .card:hover,.card:focus{transform:translateY(-1px);border-color:#3a4a78} .card__top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start} .card__tag{font-size:.78rem;color:#c8d4f7;background:#17213c;border:1px solid var(--border);padding:4px 8px;border-radius:999px} .card__title{font-size:1.05rem;font-weight:800} .card__desc{color:var(--muted);font-size:.95rem;line-height:1.55} .card__actions{display:flex;gap:8px;flex-wrap:wrap} .mini{border:1px solid var(--border);background:#11182c;color:var(--text);border-radius:999px;padding:7px 10px;cursor:pointer} .mini.is-on{border-color:var(--accent2);background:rgba(126,224,195,.14)} .panel--detail{overflow:hidden} .detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px} .detail-card{padding:14px;border:1px solid var(--border);border-radius:18px;background:rgba(8,13,24,.45)} .detail-card pre{margin:0;white-space:pre-wrap;word-break:break-word;background:#08101d;border-radius:14px;padding:12px;border:1px solid var(--border);color:#d8e4ff;min-height:160px;overflow:auto} .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#10192d;border:1px solid var(--border);border-radius:999px;padding:12px 16px;color:var(--text);opacity:0;pointer-events:none;transition:.25s} .toast.show{opacity:1;bottom:24px} @media (max-width: 900px){.layout,.detail-grid{grid-template-columns:1fr}} @media (max-width: 640px){.app-shell{padding:12px}.hero{padding:14px}.stats{grid-template-columns:1fr}.toolbar,.controls{align-items:stretch}.search,.select{min-width:0}.card-list{grid-template-columns:1fr}}</style></head><body><main class="app-shell" aria-label="Node.js学習サイト">
+  <header class="hero">
+    <div class="hero__badge" aria-hidden="true">⬢</div>
+    <div class="hero__text">
+      <p class="eyebrow">Node.js 学習サイト</p>
+      <h1>ダークモードで学ぶ、Node.jsの基礎と定番ライブラリ</h1>
+      <p class="hero__lead">組み込み関数・主要モジュール・有名ライブラリを、日本語でまとめて確認できる学習ダッシュボードです。検索、カテゴリ切替、お気に入り、メモ保存にも対応しています。</p>
+    </div>
+  </header>
+
+  <section class="toolbar" aria-label="操作パネル">
+    <label class="search" for="searchInput">
+      <span>検索</span>
+      <input id="searchInput" type="search" placeholder="例: fs, express, 非同期, stream" autocomplete="off" />
+    </label>
+
+    <div class="controls">
+      <label class="select">
+        <span>カテゴリ</span>
+        <select id="categorySelect" aria-label="カテゴリ選択"></select>
+      </label>
+
+      <label class="select">
+        <span>並び順</span>
+        <select id="sortSelect" aria-label="並び順選択">
+          <option value="recommended">おすすめ順</option>
+          <option value="title">名前順</option>
+          <option value="level">難易度順</option>
+        </select>
+      </label>
+
+      <button id="themeToggle" class="btn btn--ghost" type="button" aria-pressed="true" aria-label="テーマ切り替え">🌙 ダーク</button>
+      <button id="resetButton" class="btn btn--ghost" type="button">状態をリセット</button>
+    </div>
+  </section>
+
+  <section class="stats" aria-label="学習状況">
+    <article>
+      <strong id="countTotal">0</strong>
+      <span>掲載項目</span>
+    </article>
+    <article>
+      <strong id="countFav">0</strong>
+      <span>お気に入り</span>
+    </article>
+    <article>
+      <strong id="countDone">0</strong>
+      <span>学習済み</span>
+    </article>
+  </section>
+
+  <section class="layout">
+    <aside class="panel panel--sidebar" aria-label="学習ガイド">
+      <div class="panel__header">
+        <h2>学習の進め方</h2>
+        <p>左の一覧から知りたい項目を選んで、下の詳細を読み進めてください。</p>
+      </div>
+      <ol class="steps">
+        <li>まずは <strong>基本構文</strong> と <strong>非同期処理</strong> を押さえる</li>
+        <li>次に <strong>fs / path / http / events</strong> を理解する</li>
+        <li>最後に <strong>Express</strong> や <strong>dotenv</strong> など定番ライブラリを触る</li>
+      </ol>
+
+      <div class="note-box">
+        <h3>学習メモ</h3>
+        <textarea id="memoInput" rows="7" placeholder="ここに学習メモを保存できます。例: nextはSSR、streamは大きなデータの逐次処理..." aria-label="学習メモ"></textarea>
+        <div class="memo-actions">
+          <button id="saveMemo" class="btn" type="button">メモを保存</button>
+          <button id="clearMemo" class="btn btn--ghost" type="button">メモを消去</button>
+        </div>
+      </div>
+    </aside>
+
+    <section class="panel panel--content" aria-label="学習コンテンツ">
+      <div class="panel__header">
+        <h2 id="sectionTitle">基本・主要API</h2>
+        <p id="sectionDesc">Node.jsの土台となる概念や、日常的によく使う組み込み機能をまとめています。</p>
+      </div>
+
+      <div id="chips" class="chips" aria-label="タグフィルタ"></div>
+      <div id="cardList" class="card-list" role="list"></div>
+    </section>
+  </section>
+
+  <section class="panel panel--detail" aria-label="詳細解説">
+    <div class="panel__header">
+      <h2 id="detailTitle">項目を選択してください</h2>
+      <p id="detailMeta">詳細・使いどころ・代表例・学習ポイントを表示します。</p>
+    </div>
+
+    <div class="detail-grid">
+      <article class="detail-card">
+        <h3>説明</h3>
+        <p id="detailDescription">左のカードを選ぶと、ここに解説が表示されます。</p>
+      </article>
+      <article class="detail-card">
+        <h3>使いどころ</h3>
+        <ul id="detailUses"></ul>
+      </article>
+      <article class="detail-card">
+        <h3>代表例</h3>
+        <pre id="detailExample" tabindex="0" aria-label="コード例"></pre>
+      </article>
+      <article class="detail-card">
+        <h3>学習メモ</h3>
+        <p id="detailTip">難しい項目は「何をする機能か」「いつ使うか」を先に覚えると理解しやすいです。</p>
+      </article>
+    </div>
+  </section>
+</main>
+
+<div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div><script>(()=>{const KEY='node-learn-dashboard-v1';const data=[{id:'runtime',category:'基本',level:1,title:'Node.jsとは',tag:'基礎',recommended:1,desc:'ChromeのV8上で動くJavaScript実行環境。サーバー、CLI、バッチ処理などに使われます。',uses:['WebサーバーやAPIを作る','CLIツールを作る','I/Oの多い処理を高速にさばく'],example:`console.log('Hello Node.js');
+
+// 環境変数
+console.log(process.env.NODE_ENV ?? 'development');`,tip:'まずは「JavaScriptをブラウザ外で動かす仕組み」と理解すると入口がつかみやすいです。'}, {id:'modules',category:'基本',level:1,title:'組み込みモジュール',tag:'基礎',recommended:1,desc:'fs, path, http, os, events など、Node.jsに最初から入っている機能群です。',uses:['ファイル操作','パス処理','HTTPサーバー','イベント処理'],example:`import fs from 'node:fs';
+import path from 'node:path';
+
+const file = path.join(process.cwd(), 'data.txt');
+if (fs.existsSync(file)) {
+  console.log(fs.readFileSync(file, 'utf8'));
+}`,tip:'node:プレフィックスを使うと標準モジュールだと分かりやすくなります。'}, {id:'fs',category:'組み込み',level:2,title:'fs / ファイル操作',tag:'I/O',recommended:1,desc:'ファイルの読み書き、監視、削除などを行うモジュールです。同期/非同期の違いが重要です。',uses:['設定ファイルを読む','ログを書く','アップロードファイルを扱う'],example:`import { readFile, writeFile } from 'node:fs/promises';
+
+const text = await readFile('./input.txt', 'utf8');
+await writeFile('./output.txt', text.toUpperCase());`,tip:'大量のファイルやサーバー処理では、非同期APIを優先するのが基本です。'}, {id:'path',category:'組み込み',level:1,title:'path / パス処理',tag:'基礎',recommended:1,desc:'OSごとの差を吸収してファイルパスを安全に扱うモジュールです。',uses:['相対パスと絶対パスの変換','拡張子やファイル名の取得','安全な結合'],example:`import path from 'node:path';
+
+const full = path.join('/app', 'src', 'index.js');
+console.log(path.basename(full));
+console.log(path.extname(full));`,tip:'文字列の連結でパスを作らず、必ずpath.join()を使うのが安全です。'}, {id:'http',category:'組み込み',level:2,title:'http / サーバー作成',tag:'Web',recommended:1,desc:'HTTPサーバーを直接作れる標準モジュールです。Expressの前に仕組みを理解するのに最適です。',uses:['簡易APIを作る','リクエストとレスポンスを理解する','ヘルスチェックを作る'],example:`import http from 'node:http';
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+  res.end('こんにちは');
+});
+
+server.listen(3000);`,tip:'req.url、req.method、res.writeHead、res.end の流れを覚えると理解が速いです。'}, {id:'events',category:'組み込み',level:2,title:'events / イベント',tag:'基礎',recommended:1,desc:'イベント駆動の中心となる仕組みです。Node.jsらしい非同期の土台です。',uses:['独自イベントを発火する','ストリームやソケットを扱う','疎結合な設計'],example:`import { EventEmitter } from 'node:events';
+
+const bus = new EventEmitter();
+bus.on('done', (value) => console.log(value));
+bus.emit('done', '完了しました');`,tip:'「起きたことを通知する」方式に慣れると、Nodeの設計が見えやすくなります。'}, {id:'async',category:'基本',level:2,title:'非同期処理',tag:'重要',recommended:1,desc:'Promise、async/await、コールバックの考え方です。Node.js学習で最重要の一つです。',uses:['API通信','ファイル読み込み','複数処理の並列実行'],example:`const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+async function run() {
+  await sleep(500);
+  return '完了';
+}
+
+run().then(console.log);`,tip:'「待つ処理はPromiseにする」「上位ではasync/awaitで読む」が基本形です。'}, {id:'stream',category:'組み込み',level:3,title:'stream / 大きなデータ処理',tag:'性能',recommended:1,desc:'巨大ファイルやネットワーク通信を分割して処理する仕組みです。',uses:['動画・音声・ログ処理','巨大ファイルの読み書き','パイプ処理'],example:`import fs from 'node:fs';
+
+fs.createReadStream('./big.txt')
+  .pipe(fs.createWriteStream('./copy.txt'));`,tip:'一度に全部読むのではなく、流しながら処理するのがstreamの強みです。'}, {id:'buffer',category:'組み込み',level:3,title:'Buffer / バイナリ',tag:'低レベル',recommended:1,desc:'文字列ではない生データを扱うための型です。ファイルや通信で登場します。',uses:['画像や音声の処理','暗号化','TCP/HTTPの低レベル処理'],example:`const buf = Buffer.from('Node.js');
+console.log(buf.toString('hex'));`,tip:'文字列とバイナリの切り替えを理解すると、ネットワークやファイル処理が広がります。'}, {id:'child_process',category:'組み込み',level:3,title:'child_process / 外部コマンド実行',tag:'OS',recommended:1,desc:'OSのコマンドや別プロセスを起動します。ビルドツールや自動化で使います。',uses:['gitやffmpegの呼び出し','スクリプト自動化','重い処理の分離'],example:`import { execFile } from 'node:child_process';
+
+execFile('node', ['-v'], (err, stdout) => {
+  if (err) throw err;
+  console.log(stdout);
+});`,tip:'ユーザー入力をそのままシェルに渡さないなど、安全性に注意してください。'}, {id:'crypto',category:'組み込み',level:3,title:'crypto / 暗号化',tag:'安全',recommended:1,desc:'ハッシュ、署名、乱数生成などを扱います。パスワード保存にも関係します。',uses:['パスワードのハッシュ化','トークン生成','ファイル整合性確認'],example:`import { createHash } from 'node:crypto';
+
+const hash = createHash('sha256').update('secret').digest('hex');
+console.log(hash);`,tip:'パスワードはハッシュ化して保存し、平文では保存しないのが大原則です。'}, {id:'express',category:'ライブラリ',level:2,title:'Express',tag:'定番',recommended:1,desc:'Node.jsで最も有名なWebフレームワークの一つ。ルーティングやミドルウェアが分かりやすいです。',uses:['REST API','認証付きWebアプリ','簡単なサーバー'],example:`import express from 'express';
+const app = express();
+app.get('/hello', (req, res) => res.json({ message: 'こんにちは' }));
+app.listen(3000);`,tip:'まずは app.get / app.post / app.use の役割を押さえると良いです。'}, {id:'dotenv',category:'ライブラリ',level:1,title:'dotenv',tag:'定番',recommended:1,desc:'環境変数を .env ファイルから読み込むためのライブラリです。',uses:['APIキー管理','開発/本番で設定を分ける','秘密情報の分離'],example:`import 'dotenv/config';
+console.log(process.env.API_KEY);`,tip:'秘密情報をコードに直書きしない習慣づけに役立ちます。'}, {id:'zod',category:'ライブラリ',level:2,title:'Zod',tag:'検証',recommended:1,desc:'TypeScriptとの相性が良いスキーマ検証ライブラリです。入力値の検証に便利です。',uses:['フォームの検証','APIリクエストのバリデーション','設定ファイルの検査'],example:`import { z } from 'zod';
+const schema = z.object({ name: z.string().min(1) });
+const result = schema.safeParse({ name: 'Nova' });`,tip:'外部入力は必ず検証する、という習慣に直結します。'}, {id:'mongoose',category:'ライブラリ',level:2,title:'Mongoose',tag:'DB',recommended:1,desc:'MongoDBを使うためのODMです。スキーマ、バリデーション、モデル操作をまとめて扱えます。',uses:['MongoDBのモデル管理','バリデーション','CRUD'],example:`import mongoose from 'mongoose';
+const User = mongoose.model('User', new mongoose.Schema({ name: String }));`,tip:'MongoDBを使うなら、最初の選択肢としてよく挙がる定番です。'}, {id:'prisma',category:'ライブラリ',level:2,title:'Prisma',tag:'DB',recommended:1,desc:'型安全で扱いやすいORMです。PostgreSQLやMySQLなどで人気があります。',uses:['DBアクセスを型安全にする','マイグレーション','APIのCRUD'],example:`// schema.prisma でモデル定義
+// const users = await prisma.user.findMany();`,tip:'SQLを保ちつつ開発体験を良くしたいときに有力です。'}, {id:'jest',category:'ライブラリ',level:2,title:'Jest',tag:'テスト',recommended:1,desc:'JavaScriptのテストフレームワークです。単体テストやモックで広く使われます。',uses:['関数の単体テスト','モック・スパイ','TDD'],example:`test('足し算', () => {
+  expect(1 + 2).toBe(3);
+});`,tip:'テストは「壊れたときにすぐ気づくため」の仕組みです。'}, {id:'vitest',category:'ライブラリ',level:2,title:'Vitest',tag:'テスト',recommended:1,desc:'Vite系の高速テストランナーです。最近は採用例が増えています。',uses:['高速なテスト実行','TypeScript環境','モダンな開発'],example:`import { expect, test } from 'vitest';
+test('ok', () => expect(true).toBe(true));`,tip:'Jestに近い書き味で、軽快さが魅力です。'}, {id:'nodemon',category:'ライブラリ',level:1,title:'nodemon',tag:'開発支援',recommended:1,desc:'ファイル変更時にNodeプロセスを自動再起動する開発補助ツールです。',uses:['開発中の自動再起動','手動再起動の手間削減'],example:`// nodemon src/index.js`,tip:'開発効率を上げる定番ツールです。'}, {id:'pino',category:'ライブラリ',level:2,title:'Pino',tag:'ログ',recommended:1,desc:'高速なロガーです。本番運用でよく選ばれます。',uses:['APIログ','構造化ログ','障害調査'],example:`import pino from 'pino';
+const log = pino();
+log.info({ userId: 1 }, 'ログ出力');`,tip:'本番では console.log だけでなく、構造化ログの考え方が重要です。'}, {id:'socketio',category:'ライブラリ',level:3,title:'Socket.IO',tag:'リアルタイム',recommended:1,desc:'双方向通信を簡単に扱えるライブラリです。チャットや通知で使われます。',uses:['チャット機能','リアルタイム通知','共同編集'],example:`// serverとclientでsocketイベントをやり取り`,tip:'WebSocketベースのリアルタイム通信を手軽に実装できます。'}]; const state={search:'',category:'すべて',sort:'recommended',selectedId:'runtime',favorites:new Set(),done:new Set(),memo:'',theme:'dark'}; const els={searchInput:document.getElementById('searchInput'),categorySelect:document.getElementById('categorySelect'),sortSelect:document.getElementById('sortSelect'),themeToggle:document.getElementById('themeToggle'),resetButton:document.getElementById('resetButton'),countTotal:document.getElementById('countTotal'),countFav:document.getElementById('countFav'),countDone:document.getElementById('countDone'),chips:document.getElementById('chips'),cardList:document.getElementById('cardList'),sectionTitle:document.getElementById('sectionTitle'),sectionDesc:document.getElementById('sectionDesc'),detailTitle:document.getElementById('detailTitle'),detailMeta:document.getElementById('detailMeta'),detailDescription:document.getElementById('detailDescription'),detailUses:document.getElementById('detailUses'),detailExample:document.getElementById('detailExample'),detailTip:document.getElementById('detailTip'),memoInput:document.getElementById('memoInput'),saveMemo:document.getElementById('saveMemo'),clearMemo:document.getElementById('clearMemo'),toast:document.getElementById('toast')}; const categories=['すべて',...new Set(data.map(d=>d.category))]; function load(){try{const raw=localStorage.getItem(KEY);if(!raw)return;const saved=JSON.parse(raw);state.search=saved.search||'';state.category=saved.category||'すべて';state.sort=saved.sort||'recommended';state.selectedId=saved.selectedId||'runtime';state.memo=saved.memo||'';state.theme=saved.theme||'dark';state.favorites=new Set(saved.favorites||[]);state.done=new Set(saved.done||[])}catch(e){console.warn(e)}} function save(){try{localStorage.setItem(KEY,JSON.stringify({...state,favorites:[...state.favorites],done:[...state.done]}))}catch(e){showToast('保存できませんでした')} } function showToast(msg){els.toast.textContent=msg;els.toast.classList.add('show');clearTimeout(showToast.t);showToast.t=setTimeout(()=>els.toast.classList.remove('show'),1600)} function renderCategories(){els.categorySelect.innerHTML=categories.map(c=>`<option value="${c}">${c}</option>`).join('');els.chips.innerHTML=categories.map(c=>`<button class="chip" type="button" aria-pressed="${state.category===c}" data-cat="${c}">${c}</button>`).join('')} function filtered(){let list=data.filter(d=>(state.category==='すべて'||d.category===state.category)&&`${d.title} ${d.desc} ${d.tag} ${d.category}`.toLowerCase().includes(state.search.toLowerCase().trim()));const s=state.sort;if(s==='title')list.sort((a,b)=>a.title.localeCompare(b.title,'ja'));else if(s==='level')list.sort((a,b)=>a.level-b.level);else list.sort((a,b)=>(b.recommended-a.recommended)||(a.level-b.level));return list} function renderList(){const list=filtered();els.countTotal.textContent=data.length;els.countFav.textContent=state.favorites.size;els.countDone.textContent=state.done.size;els.categorySelect.value=state.category;els.sortSelect.value=state.sort;els.searchInput.value=state.search;els.memoInput.value=state.memo;els.themeToggle.textContent=state.theme==='dark'?'🌙 ダーク':'☀️ ライト';els.themeToggle.setAttribute('aria-pressed',String(state.theme==='dark'));document.documentElement.style.colorScheme=state.theme;document.body.style.background=state.theme==='dark'?'radial-gradient(circle at top,#16213f 0%,#0b1020 48%,#070b14 100%)':'radial-gradient(circle at top,#f2f5ff 0%,#dbe5ff 48%,#c8d5ff 100%)';document.body.style.color=state.theme==='dark'?'#e7eefc':'#101423';els.chips.querySelectorAll('.chip').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.cat===state.category)));els.cardList.innerHTML=list.length?list.map(item=>`<article class="card" role="listitem" tabindex="0" data-id="${item.id}"><div class="card__top"><div><div class="card__title">${item.title}</div><div class="card__desc">${item.desc}</div></div><span class="card__tag">${item.tag}</span></div><div class="card__actions"><button class="mini ${state.favorites.has(item.id)?'is-on':''}" type="button" data-action="fav" data-id="${item.id}">${state.favorites.has(item.id)?'★ お気に入り':'☆ お気に入り'}</button><button class="mini ${state.done.has(item.id)?'is-on':''}" type="button" data-action="done" data-id="${item.id}">${state.done.has(item.id)?'✓ 学習済み':'＋ 学習済み'}</button></div></article>`).join(''):'<div class="detail-card"><p>条件に一致する項目がありません。検索語やカテゴリを変更してください。</p></div>'; const current=list.find(i=>i.id===state.selectedId)||list[0]||data[0]; if(current) showDetail(current)} function showDetail(item){state.selectedId=item.id;els.detailTitle.textContent=item.title;els.detailMeta.textContent=`カテゴリ: ${item.category} / 難易度: ${item.level} / タグ: ${item.tag}`;els.detailDescription.textContent=item.desc;els.detailExample.textContent=item.example;els.detailTip.textContent=item.tip;els.detailUses.innerHTML=item.uses.map(u=>`<li>${u}</li>`).join(''); els.sectionTitle.textContent=item.category+'・'+item.tag; els.sectionDesc.textContent='選択中の項目の関連情報を表示しています。'} function setTheme(mode){state.theme=mode;save();renderList()} function init(){load();renderCategories();renderList();els.searchInput.addEventListener('input',e=>{state.search=e.target.value;save();renderList()});els.categorySelect.addEventListener('change',e=>{state.category=e.target.value;save();renderList()});els.sortSelect.addEventListener('change',e=>{state.sort=e.target.value;save();renderList()});els.themeToggle.addEventListener('click',()=>setTheme(state.theme==='dark'?'light':'dark'));els.resetButton.addEventListener('click',()=>{if(!confirm('保存した状態をリセットしますか？'))return;localStorage.removeItem(KEY);location.reload()});els.saveMemo.addEventListener('click',()=>{state.memo=els.memoInput.value.trim();save();showToast('メモを保存しました')});els.clearMemo.addEventListener('click',()=>{els.memoInput.value='';state.memo='';save();showToast('メモを消去しました')});els.chips.addEventListener('click',e=>{const btn=e.target.closest('.chip');if(!btn)return;state.category=btn.dataset.cat;save();renderList()});els.cardList.addEventListener('click',e=>{const action=e.target.closest('[data-action]');if(action){const id=action.dataset.id;try{if(action.dataset.action==='fav'){state.favorites.has(id)?state.favorites.delete(id):state.favorites.add(id)}else{state.done.has(id)?state.done.delete(id):state.done.add(id)}save();renderList();showToast('更新しました')}catch(err){showToast('更新に失敗しました')}return} const card=e.target.closest('.card');if(card){const item=data.find(d=>d.id===card.dataset.id);if(item)showDetail(item)}});els.cardList.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const card=e.target.closest('.card');if(card){e.preventDefault();const item=data.find(d=>d.id===card.dataset.id);if(item)showDetail(item)}});document.addEventListener('keydown',e=>{if(e.key==='Escape'){els.searchInput.blur();document.activeElement?.blur();showToast('フォーカスを解除しました')}})} init()})();</script></body></html>
