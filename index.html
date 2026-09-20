@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Bows &amp; Banners — Medieval Bow FPS</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            html,
+            body {
+                margin: 0;
+                height: 100%;
+                overflow: hidden;
+                background: #14100c;
+                font-family: Georgia, "Times New Roman", serif;
+                user-select: none;
+            }
+            #c {
+                position: fixed;
+                inset: 0;
+                display: block;
+                cursor: crosshair;
+            }
+            #hud {
+                position: fixed;
+                inset: 0;
+                pointer-events: none;
+                color: #efe3c8;
+                z-index: 4;
+            }
+            #score {
+                position: fixed;
+                top: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 24px;
+                letter-spacing: 2px;
+                background: rgba(18, 14, 9, 0.65);
+                border: 1px solid #6b5b3e;
+                border-radius: 4px;
+                padding: 4px 16px;
+                white-space: nowrap;
+            }
+            #score .r {
+                color: #ff7b6e;
+                font-weight: bold;
+            }
+            #score .b {
+                color: #6ea8ff;
+                font-weight: bold;
+            }
+            #objective {
+                position: fixed;
+                top: 52px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 12px;
+                opacity: 0.85;
+                white-space: nowrap;
+            }
+            #crosshair {
+                position: fixed;
+                left: 50%;
+                top: 50%;
+                width: 0;
+                height: 0;
+                z-index: 5;
+            }
+            .ch {
+                position: absolute;
+                background: rgba(255, 252, 240, 0.92);
+                box-shadow: 0 0 3px rgba(0, 0, 0, 0.85);
+            }
+            .ch.t {
+                width: 2px;
+                height: 9px;
+                left: -1px;
+                top: -15px;
+            }
+            .ch.b {
+                width: 2px;
+                height: 9px;
+                left: -1px;
+                top: 6px;
+            }
+            .ch.l {
+                width: 9px;
+                height: 2px;
+                left: -15px;
+                top: -1px;
+            }
+            .ch.r {
+                width: 9px;
+                height: 2px;
+                left: 6px;
+                top: -1px;
+            }
+            .chd {
+                position: absolute;
+                width: 2px;
+                height: 2px;
+                left: -1px;
+                top: -1px;
+                background: rgba(255, 252, 240, 0.7);
+            }
+            #chargeCv {
+                position: absolute;
+                left: -28px;
+                top: -28px;
+            }
+            #vignette {
+                position: fixed;
+                inset: 0;
+                pointer-events: none;
+                background: radial-gradient(
+                    ellipse at center,
+                    rgba(0, 0, 0, 0) 52%,
+                    rgba(150, 10, 5, 0.65) 100%
+                );
+                opacity: 0;
+                z-index: 3;
+            }
+            #msg {
+                position: fixed;
+                top: 20%;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 24px;
+                color: #ffd98a;
+                text-shadow: 0 2px 8px #000;
+                opacity: 0;
+                white-space: nowrap;
+                z-index: 6;
+            }
+            #feed {
+                position: fixed;
+                top: 96px;
+                right: 14px;
+                text-align: right;
+                font-size: 13px;
+                z-index: 6;
+            }
+            .feeditem {
+                background: rgba(15, 12, 8, 0.65);
+                padding: 2px 8px;
+                margin-top: 4px;
+                border-right: 3px solid #6b5b3e;
+                color: #e8dcc0;
+            }
+            #hpwrap {
+                position: fixed;
+                left: 14px;
+                bottom: 14px;
+                width: 230px;
+                z-index: 6;
+                padding: 9px 10px 7px;
+                background: rgba(16, 13, 9, 0.6);
+                border: 1px solid #6b5b3e;
+                border-radius: 5px;
+            }
+            #hpbar {
+                height: 14px;
+                background: rgba(0, 0, 0, 0.55);
+                border: 1px solid #6b5b3e;
+            }
+            #hpfill {
+                height: 100%;
+                width: 100%;
+                background: linear-gradient(#8ed05e, #549c34);
+            }
+            #stambar {
+                height: 8px;
+                margin-top: 3px;
+                background: rgba(0, 0, 0, 0.55);
+                border: 1px solid #6b5b3e;
+            }
+            #stamfill {
+                height: 100%;
+                width: 100%;
+                background: linear-gradient(#e0c36a, #a8842e);
+            }
+            #hptext {
+                position: absolute;
+                right: 0;
+                top: -2px;
+                font-size: 14px;
+                font-weight: bold;
+            }
+            #equip {
+                margin-top: 6px;
+                font-size: 14px;
+                color: #d9c9a3;
+            }
+            #wpn {
+                position: fixed;
+                right: 14px;
+                bottom: 14px;
+                text-align: right;
+                z-index: 6;
+                padding: 9px 12px;
+                background: rgba(16, 13, 9, 0.6);
+                border: 1px solid #6b5b3e;
+                border-radius: 5px;
+            }
+            #weapon {
+                font-size: 17px;
+            }
+            #ammo {
+                font-size: 24px;
+                color: #ffd98a;
+            }
+            #reload {
+                font-size: 13px;
+                color: #ff9d7a;
+                height: 16px;
+            }
+            #minimap {
+                position: fixed;
+                right: 14px;
+                bottom: 118px;
+                border: 2px solid #6b5b3e;
+                border-radius: 4px;
+                background: rgba(20, 26, 17, 0.9);
+                z-index: 6;
+            }
+            #overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(10, 8, 5, 0.86);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                color: #e8dcc0;
+                text-align: center;
+                z-index: 10;
+                cursor: pointer;
+            }
+            #ovTitle {
+                font-size: 50px;
+                color: #ffd98a;
+                letter-spacing: 4px;
+                text-shadow: 0 3px 14px #000;
+            }
+            #ovSub {
+                margin: 12px 0 6px;
+                font-size: 17px;
+                opacity: 0.92;
+            }
+            #ovNote {
+                margin-bottom: 16px;
+                font-size: 14px;
+                opacity: 0.8;
+            }
+            #ovControls {
+                font-size: 14px;
+                line-height: 2;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid #6b5b3e;
+                padding: 12px 26px;
+                border-radius: 6px;
+            }
+            #ovControls b {
+                color: #ffd98a;
+            }
+            #ovBtn {
+                margin-top: 22px;
+                font-size: 19px;
+                color: #241a08;
+                background: linear-gradient(#ffd98a, #d9a441);
+                padding: 10px 34px;
+                border-radius: 6px;
+                border: 2px solid #8a6d2f;
+                letter-spacing: 1px;
+            }
+            .hidden {
+                display: none !important;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="c"></canvas>
+        <div id="hud">
+            <div id="score"></div>
+            <div id="objective">
+                Steal the enemy flag or the gold banner — bring it home, 3
+                captures win
+            </div>
+            <div id="crosshair">
+                <canvas id="chargeCv" width="56" height="56"></canvas>
+                <div class="ch t"></div>
+                <div class="ch b"></div>
+                <div class="ch l"></div>
+                <div class="ch r"></div>
+                <div class="chd"></div>
+            </div>
+            <div id="feed"></div>
+            <div id="msg"></div>
+            <div id="vignette"></div>
+            <div id="hpwrap">
+                <div id="hpbar"><div id="hpfill"></div></div>
+                <div id="stambar"><div id="stamfill"></div></div>
+                <div id="hptext">100</div>
+                <div id="equip"></div>
+            </div>
+            <div id="wpn">
+                <div id="weapon"></div>
+                <div id="ammo"></div>
+                <div id="reload"></div>
+            </div>
+            <canvas id="minimap" width="150" height="160"></canvas>
+        </div>
+        <div id="overlay">
+            <div id="ovTitle"></div>
+            <div id="ovSub"></div>
+            <div id="ovNote"></div>
+            <div id="ovControls"></div>
+            <div id="ovBtn"></div>
+        </div>
+        <script src="lib/three.min.js"></script>
+        <script src="js/utils.js"></script>
+        <script src="js/textures.js"></script>
+        <script src="js/setup.js"></script>
+        <script src="js/config.js"></script>
+        <script src="js/world.js"></script>
+        <script src="js/characters.js"></script>
+        <script src="js/arrows.js"></script>
+        <script src="js/bots.js"></script>
+        <script src="js/player.js"></script>
+        <script src="js/flags.js"></script>
+        <script src="js/ui.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>
