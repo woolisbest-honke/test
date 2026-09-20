@@ -1,0 +1,107 @@
+// ---------- Equipment (5 sets) ----------
+const EQUIP = [
+  {
+    name: "Traveler",
+    speed: 1.3,
+    armor: 1.0,
+    melee: 1.0,
+    desc: "Cloth — swift, unprotected",
+  },
+  {
+    name: "Leather",
+    speed: 1.15,
+    armor: 0.88,
+    melee: 1.0,
+    desc: "Leather — quick and light",
+  },
+  {
+    name: "Chainmail",
+    speed: 1.0,
+    armor: 0.75,
+    melee: 1.0,
+    desc: "Chainmail — balanced",
+  },
+  {
+    name: "Plate",
+    speed: 0.8,
+    armor: 0.55,
+    melee: 1.0,
+    desc: "Plate — slow, heavy protection",
+  },
+  {
+    name: "Champion",
+    speed: 1.1,
+    armor: 0.7,
+    melee: 1.3,
+    desc: "Champion kit — swift, mighty sword",
+  },
+];
+
+// ---------- Weapons (3 bows + sword) ----------
+const WEAPONS = [
+  {
+    name: "Shortbow",
+    type: "bow",
+    quiver: 10,
+    dmg: 30,
+    dmgMax: 0,
+    speed: 55,
+    speedMax: 0,
+    chargeTime: 0.12,
+    minCharge: 0.05,
+    cd: 0.32,
+    spread: 0.015,
+    volley: 1,
+    volSpread: 0,
+    snd: "shoot",
+    desc: "Rapid fire, 10 arrows per quiver",
+  },
+  {
+    name: "Greatbow",
+    type: "bow",
+    quiver: 9,
+    dmg: 30,
+    dmgMax: 20,
+    speed: 70,
+    speedMax: 25,
+    chargeTime: 0.55,
+    minCharge: 0.2,
+    cd: 0.9,
+    spread: 0.006,
+    volley: 3,
+    volSpread: 0.05,
+    snd: "shoot",
+    desc: "Long range, 3-arrow volleys",
+  },
+  {
+    name: "Crossbow",
+    type: "bow",
+    quiver: 9,
+    dmg: 30,
+    dmgMax: 60,
+    speed: 75,
+    speedMax: 20,
+    chargeTime: 0.8,
+    minCharge: 0.25,
+    cd: 1.0,
+    spread: 0.004,
+    volley: 1,
+    volSpread: 0,
+    snd: "cross",
+    desc: "Slow, devastating heavy bolts",
+  },
+  {
+    name: "Sword",
+    type: "melee",
+    dmg: 35,
+    desc: "Steel blade — hold RMB to guard",
+  },
+];
+
+// ---------- Killstreak titles ----------
+const TITLES = {
+  3: "On a Roll!",
+  5: "Slaughterer!",
+  7: "Wrath of the Gods!",
+  10: "Legend of the Realm!",
+};
